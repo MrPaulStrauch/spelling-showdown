@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spelling Showdown</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdf6ec;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #fdd835;
+      font-size: 3rem;
+      text-shadow: 2px 2px #333;
+    }
+    .word-button {
+      display: inline-block;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      background-color: #fff;
+      border: 2px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .word-button:hover {
+      background-color: #f0f0f0;
+    }
+    #feedback {
+      font-size: 2rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    #score {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Spelling Showdown</h1>
+  <div id="question-container">
+    <p id="prompt">Click the Correct Spelling!</p>
+    <div>
+      <button id="btn1" class="word-button" onclick="checkAnswer(this)"></button>
+      <button id="btn2" class="word-button" onclick="checkAnswer(this)"></button>
+    </div>
+    <div id="feedback"></div>
+    <div id="score">Score: 0 / 5</div>
+  </div>
+
+  <script>
+    const words = [
+      { correct: "friend", wrong: "freind" },
+      { correct: "beautiful", wrong: "beatiful" },
+      { correct: "because", wrong: "becuase" },
+      { correct: "elephant", wrong: "elefant" },
+      { correct: "February", wrong: "Febuary" }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('score');
+
+    function shuffleWords(correct, wrong) {
+      if (Math.random() < 0.5) {
+        btn1.textContent = correct;
+        btn2.textContent = wrong;
+        btn1.dataset.correct = "true";
+        btn2.dataset.correct = "false";
+      } else {
+        btn1.textContent = wrong;
+        btn2.textContent = correct;
+        btn1.dataset.correct = "false";
+        btn2.dataset.correct = "true";
+      }
+    }
+
+    function loadQuestion() {
+      if (current >= words.length) {
+        document.getElementById('prompt').textContent = "Game Over!";
+        btn1.style.display = "none";
+        btn2.style.display = "none";
+        feedback.style.display = "none";
+        return;
+      }
+
+      const word = words[current];
+      shuffleWords(word.correct, word.wrong);
+      feedback.style.display = "none";
+    }
+
+    function checkAnswer(button) {
+      const isCorrect = button.dataset.correct === "true";
+      if (isCorrect) {
+        score++;
+        feedback.textContent = "Correct!";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = "Oops! The correct spelling is: " + 
+          (btn1.dataset.correct === "true" ? btn1.textContent : btn2.textContent);
+        feedback.style.color = "red";
+      }
+
+      feedback.style.display = "block";
+      scoreDisplay.textContent = `Score: ${score} / ${words.length}`;
+      current++;
+      setTimeout(loadQuestion, 1500);
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
